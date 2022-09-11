@@ -1,0 +1,68 @@
+body {
+    margin: 0;
+    background-color: rgb(231, 235, 239);
+}
+
+h1 {
+    text-align: center;
+}
+
+.items-list {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    padding: 15px;
+}
+
+.items-list > section {
+    box-shadow: 1px 1Px 4px silver;
+    padding: 4px;
+    border-radius: 10px;
+    margin: 20px;
+    width: 450px;
+}
+
+.items-list img {
+    border-radius: 10px 10px 0 0;
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+    object-position: center;
+}
+
+#global-like-dislike-section {
+    position: fixed;
+    z-index: 2;
+    bottom: 5px;
+    right: 5px;
+    background-color: white;
+    box-shadow: -2px -2px 6px silver;
+    padding: 20px;
+}
+
+.items-list button {
+    border: none;
+    background-color: transparent;
+}
+
+.items-list button i {
+    border-radius: 3px;
+    box-shadow: 1px 1px 4px silver;
+    color: white;
+    width: 30px;
+    height: 30px;
+    font-size: 14px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+.like-icon {
+    background-color: rgb(70, 208, 70);
+}
+
+.dislike-icon {
+    background-color: rgb(215, 47, 47);
+}
