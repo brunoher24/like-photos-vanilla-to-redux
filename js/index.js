@@ -1,44 +1,20 @@
-let items = [], globalLikes = 0, globalDislikes = 0, itemsElt;
-const globalLikesNbrELt =  document.getElementById("global-likes-nbr");
-const globalDislikesNbrELt =  document.getElementById("global-dislikes-nbr");
-
-const addLike = id => {
-    const index = items.findIndex(item => item.id == id);
-    if(items[index].alreadyLiked) {
-        items[index].likes --;
-        globalLikes --;
-    } else {
-        items[index].likes ++;
-        globalLikes ++;
-    }
-    items[index].alreadyLiked = !items[index].alreadyLiked;
-    document.getElementById("global-likes-nbr").innerText = "Likes : " + globalLikes;
-    itemsElt[index].querySelector(".item-like-nbr").innerText = items[index].likes;
-}
-
-const addDislike = id => {
-    const index = items.findIndex(item => item.id == id);
-    if(items[index].alreadyDisLiked) {
-        items[index].dislikes --;
-        globalDislikes --;
-    } else {
-        items[index].dislikes ++;
-        globalDislikes ++;
-    }
-    items[index].alreadyDisliked = !items[index].alreadyDisliked;
-    document.getElementById("global-dislikes-nbr").innerText = "Dislikes : " + globalDislikes;
-    itemsElt[index].querySelector(".item-dislike-nbr").innerText = items[index].dislikes;
-}
+// let items = [], globalLikes = 0, globalDislikes = 0, itemsElt, indexItemToModify;
 
 const addLikeDislikeListener = elt => {
     const btns = elt.querySelectorAll("button");
     
     btns[0].addEventListener("click", () => {
-        addLike(elt.dataset.id);
+        store.dispatch({
+            type:"LIKE", 
+            id: elt.dataset.id
+        });
     });
 
     btns[1].addEventListener("click", () => {
-        addDislike(elt.dataset.id);
+        store.dispatch({
+            type:"DISLIKE", 
+            id: elt.dataset.id
+        });
     });
 };
 
@@ -54,7 +30,8 @@ const initMockItems = async () => {
             url: img.src.small, 
             likes : Math.round(Math.random() * 1000),
             dislikes : Math.round(Math.random() * 1000),
-            alreadyLiked: false
+            alreadyLiked: false,
+            alreadyDisLiked: false
         };
     });
 }
@@ -75,6 +52,8 @@ const selectRandomMockItems = (nbr = 10, arr) => {
 const initMockItemsHtml = async () => {
     items = await initMockItems();
     let innerHTML = "<article class=\"items-list\">";
+    let globalLikes = 0;
+    let globalDislikes = 0;
     items.forEach(item => {
         innerHTML += `<section data-id=${item.id}>
                 <img src=${item.url}/>
@@ -94,20 +73,40 @@ const initMockItemsHtml = async () => {
         globalDislikes += item.dislikes;
     });
     innerHTML += "</article>";
-    document.querySelector("main").innerHTML = innerHTML;   
+    document.querySelector("main").innerHTML = innerHTML;
+    return {items, globalLikes, globalDislikes};
 };
 
-const addListeners = () => {
-    itemsElt = document.querySelectorAll(".items-list > section");
+const addListeners = itemsElt => {
     itemsElt.forEach(itemElt => {
         addLikeDislikeListener(itemElt);
     });
 }
 
-initMockItemsHtml().then(() => {
-    addListeners();
-    globalLikesNbrELt.innerText = "Likes : " + globalLikes;
-    globalDislikesNbrELt.innerText = "Dislikes : " + globalDislikes; 
+const render = () => {
+    const {globalLikes, globalDislikes, items, itemsElt, indexItemToModify} = store.getState();
+    document.getElementById("global-likes-nbr").innerText = "Likes : " + globalLikes;
+    document.getElementById("global-dislikes-nbr").innerText = "Dislikes : " + globalDislikes;
+    if(indexItemToModify > -1) {
+        itemsElt[indexItemToModify].querySelector(".item-like-nbr").innerText = items[indexItemToModify].likes;
+        itemsElt[indexItemToModify].querySelector(".item-dislike-nbr").innerText = items[indexItemToModify].dislikes;
+    }
+};
+
+initMockItemsHtml().then(({items, globalLikes, globalDislikes}) => {
+    const itemsElt =  document.querySelectorAll(".items-list > section");
+    store.dispatch({
+        type:"INIT_STATE", 
+        items,
+        globalLikes,
+        globalDislikes,
+        itemsElt
+    });
+    
+    addListeners(itemsElt);
+    render();
 });
+
+store.subscribe(render);
 
 
