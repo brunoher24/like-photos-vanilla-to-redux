@@ -18,7 +18,7 @@ const addLike = id => {
 
 const addDislike = id => {
     const index = items.findIndex(item => item.id == id);
-    if(items[index].alreadyDisLiked) {
+    if(items[index].alreadyDisliked) {
         items[index].dislikes --;
         globalDislikes --;
     } else {
@@ -54,7 +54,8 @@ const initMockItems = async () => {
             url: img.src.small, 
             likes : Math.round(Math.random() * 1000),
             dislikes : Math.round(Math.random() * 1000),
-            alreadyLiked: false
+            alreadyLiked: false,
+            alreadyDisliked: false
         };
     });
 }
